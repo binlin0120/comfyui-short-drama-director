@@ -5,6 +5,7 @@
 - 角色设定 JSON 与分镜 JSON 完成后、批量生成视频前，必须跑一次。
 - 每集成片交付前可再跑一次，确认结构没有在后期改动中回退。
 - FAIL 表示禁止批量生成；WARN 表示可放行，但建议在交付前处理。
+- 新项目量产门加 `--strict-ref`：强制参考图 `REF`/`TTV` 和尾帧接力提示。
 
 ## 命令
 
@@ -26,6 +27,13 @@ python scripts/validate_project.py --project "项目目录" `
 
 ```powershell
 python scripts/validate_project.py --project "项目目录" --json
+```
+
+配套计划：
+
+```powershell
+python scripts/plan_batch.py --shot-file "分镜_第1集.json" --role-file "角色设定_最终版.json"
+python scripts/qa_shot.py --video "第1镜.mp4" --srt "第1镜.srt" --json
 ```
 
 ## 退出码
@@ -58,6 +66,8 @@ python scripts/validate_project.py --project "项目目录" --json
 | G18 | 统一负面提示词覆盖 文字/水印/模糊/变形/手部/低质量 | FAIL |
 | G19 | 第一镜有淡入/开场，最后一镜有钩子 | WARN/FAIL |
 | G20 | 单镜出场角色不超过默认 3 人 | WARN |
+| G21 | 参考图状态为 REF/PLAN/TODO/TTV；`--strict-ref` 下必须 REF 或 TTV | WARN/FAIL |
+| G22 | 镜头尾帧描述存在且非空；`--strict-ref` 下缺失给 WARN | WARN |
 
 ## 兼容的资产格式
 
@@ -66,10 +76,14 @@ python scripts/validate_project.py --project "项目目录" --json
   `negative_prompt`、`fps`、`aspect`、`total_seconds`。
 - 分镜 Markdown：带“角色/定妆照/固定外观/音色方向”列的角色锁定卡可作为
   角色锁定与音色方向的补充来源。
+- 稳定 ID/参考图状态/尾帧描述：见 `references/project-files.md` 与
+  `references/batch-continuity.md`；旧项目不补这些字段不会新增 FAIL，
+  新项目用 `--strict-ref` 强约束。
 
 ## 修复顺序
 
 1. 先修 FAIL：角色字段/定妆照、角色锁定、镜头字段、时长范围、文字画面、
    画幅、风格块、负面提示词、结尾钩子。
 2. 再按 WARN 优化：补音色显式字段、压缩 6 秒以上镜头、降低口播密度、
-   给提及角色的镜头补 `from final portrait reference`、减少单镜角色数。
+   给提及角色的镜头补 `from final portrait reference`、减少单镜角色数、
+   补参考图状态和尾帧描述。

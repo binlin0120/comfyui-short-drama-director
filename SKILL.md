@@ -24,23 +24,33 @@ description: 担任 ComfyUI 导演总指挥，把小说或短故事拆成分镜�
 - “出剧本/分镜” → 交付分集剧本、分镜表、角色设定与提示词。
 - “出定妆照” → 先生成角色定妆图供用户审。
 - “生成第X镜” → 先按分镜跑画面与视频，成片后附质检结果。
+- “预览/前两镜” → 只跑 preview 批，给出批次单与质检结果，等用户明确“继续/量产”。
 - “校验/质检” → 先跑 `scripts/validate_project.py` 质量门，再补画面抽帧与音轨听检。
 - “配音/字幕/拟音/完整版” → 按 voice-qa.md 做音频与字幕合成。
+- “批次/批量” → 先按 batch-continuity.md 生成批次单与配音对齐单，再进 ComfyUI。
 - “审查/清理” → 先 dry-run 或列出影响清单，经用户确认后执行。
 
 ## 执行顺序
 
-1. `references/production.md`：故事拆解、剧本、分镜、角色设定、提示词规则。
-2. `references/setup.md`：本机 ComfyUI、模型、自定义节点是否就绪；未就绪先给安装方案。
-3. `references/pipeline.md`：三段式 API 生成，调用 `scripts/comfy_pipeline.py`。
-4. `references/voice-qa.md`：配音、字幕、拟音、混音与交付质检。
-5. `references/validation.md`：批量生成前跑质量门；出现 FAIL 必须先修复。
+1. `references/project-files.md` + `references/production.md`：稳定 ID、项目文件、
+   故事拆解、剧本、分镜、角色设定。
+2. `references/prompt-library.md` + `references/model-profiles.md`：镜头提示词词库、
+   画风词、统一负面包、模型档案，不写死单一模型方言。
+3. `references/setup.md`：本机 ComfyUI、模型、自定义节点是否就绪；未就绪先给安装方案。
+4. `references/pipeline.md`：三段式 API 生成，调用 `scripts/comfy_pipeline.py`。
+5. `references/batch-continuity.md`：批次单、配音对齐单、尾帧接力、残片修复。
+6. `references/voice-qa.md`：配音、字幕、拟音、混音与交付质检。
+7. `references/validation.md`：批量生成前跑质量门；出现 FAIL 必须先修复。
 
 ## 硬性质检清单
 
 - 未通过质量门（`validate_project.py` 出现 FAIL）不得进入批量生成。
+- preview → 用户明确确认 → 量产，中间跳过确认等于批量违约。
+- 参考图未锁（`ref_state` 不是 `REF` 且未声明 `TTV`）不得量产。
 - 人物不崩脸：定妆照与成片抽帧对比。
 - 屏幕文字：OCR 或逐帧目检，错字/漂移必须处理。
 - 音轨：听感干净，无电流声、爆音、环境噪声喧宾夺主；人声清楚。
 - 旁白/台词语速自然，字幕精简且不超框。
+- 相邻镜头尾帧接力：场景、人物位置、光照要连续；换场景必须有过渡。
+- 同一批镜头不得中途切换模型 profile。
 - 销毁前保留“最终版”，只清中间稿；批量删除先 dry-run。

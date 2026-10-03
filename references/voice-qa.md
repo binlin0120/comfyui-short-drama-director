@@ -35,6 +35,7 @@
 ## 3. 字幕
 
 工作流：`Add Voice → Apply Whisper → Save SRT → Add Subtitles To Frames → CreateVideo → SaveVideo`。
+配音对齐先跑 `scripts/plan_batch.py`，把台词/旁白、字数、预估语速和角色音色表拉齐。
 
 字幕规则：
 
@@ -42,6 +43,7 @@
 - 字幕底边居中，白字黑边或黑字白边，字号不要覆盖画面主体。
 - 每条字幕短句优先，两个长句拆成两条，不超框、不遮挡人物脸部。
 - 角色独白、旁白、弹字分开风格；禁止把整段小说原文做成字幕。
+- 单条字幕语速超过 6 字/秒要压缩，超过 8 字/秒必须改稿。
 
 ## 4. 拟音与混音
 
@@ -51,13 +53,28 @@
 
 - 人声清楚，BGM 压低到人声之下
 - 成品 mean 音量约 -24 到 -14 dB，peak 不超过 -3 dB
+- 综合响度建议 -20 到 -12 LUFS，真实峰值不超过 -1 dBTP；削波峰必须清零
 - 出现电流声、爆音、刺耳高频、环境噪音盖过人声时，必须重新合成或去噪
 
 ## 5. 成片质检
 
-交付前执行 `scripts/qa_shot.py --video <成片> --frames 1.0,2.5,4.0`：
+交付前执行：
 
-- 抽帧目检人物是否崩脸、文字是否正确、字幕是否超框
-- 音轨统计检查电平是否平稳
+```powershell
+python scripts/qa_shot.py --video "成片.mp4" --frames 1.0,2.5,4.0 --srt "字幕.srt"
+```
+
+可选外部钩子（不在技能里假装带 OCR/人脸模型）：
+
+```powershell
+python scripts/qa_shot.py --video "成片.mp4" `
+  --ocr-cmd "python ocr_check.py {frame}" `
+  --face-cmd "python face_check.py {frame} --ref 定妆照.png"
+```
+
+QA 工具检查：
+
+- 自动：抽帧、音轨 mean/peak、RMS、直流偏移、削波峰、响度、字幕/SRT 语速
+- 外部：OCR 文字、人物一致性钩子必须由用户提供，缺失时明确提示人工兜底
 - 完整播放一遍，检查旁白语速、口型宽松度、转场是否拖沓
 - 有问题的镜头先修对应环节，不直接交付

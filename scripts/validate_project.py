@@ -40,6 +40,7 @@ NEG_GROUPS = (
     ("低质量", ("低质量", "画质差", "low quality")),
 )
 HOOK_MARKERS = ("黑场", "钩子", "下一集", "下集", "悬念", "未完待续")
+REF_STATES = {"REF", "PLAN", "TODO", "TTV"}
 
 
 @dataclass
@@ -176,6 +177,7 @@ class ProjectValidator:
         md_tables: list[dict],
         expected_aspect: str,
         max_roles_per_shot: int,
+        strict_ref: bool = False,
     ) -> None:
         self.project = project
         self.roles = roles
@@ -183,6 +185,7 @@ class ProjectValidator:
         self.shots = shots
         self.expected_aspect = expected_aspect
         self.max_roles_per_shot = max_roles_per_shot
+        self.strict_ref = strict_ref
         self.findings: list[Finding] = []
 
         self.md_voices: dict[str, str] = {}
@@ -558,6 +561,47 @@ class ProjectValidator:
                     f"单镜角色 {len(detected)} 人（{', '.join(detected)}），建议不超过 {self.max_roles_per_shot} 人",
                 )
 
+    def check_g21_ref_states(self) -> None:
+        for i, role in enumerate(self.roles, 1):
+            name = self._role_name(role, i)
+            state = role.get("ref_state")
+            if state is None:
+                if self.strict_ref:
+                    self._fail("G21", f"角色:{name}", "缺少 ref_state，参考图未锁不得量产")
+                continue
+            key = str(state).strip().upper()
+            if key not in REF_STATES:
+                self._warn("G21", f"角色:{name}", f"ref_state={state}，应为 REF/PLAN/TODO/TTV")
+            elif key in ("PLAN", "TODO") and self.strict_ref:
+                self._fail(
+                    "G21", f"角色:{name}",
+                    f"ref_state={state} 未锁定，量产前必须改为 REF 或声明 TTV",
+                )
+        for i, shot in enumerate(self.shots, 1):
+            value = first_key(shot, ("ref_state", "参考状态", "参考图状态"))
+            if value is None:
+                if self.strict_ref:
+                    self._fail("G21", f"镜头#{i}", "缺少 ref_state，参考图未锁不得量产")
+                continue
+            key = str(value).strip().upper()
+            if key not in REF_STATES:
+                self._warn("G21", f"镜头#{i}", f"ref_state={value}，应为 REF/PLAN/TODO/TTV")
+            elif key in ("PLAN", "TODO") and self.strict_ref:
+                self._fail(
+                    "G21", f"镜头#{i}",
+                    f"ref_state={value} 未锁定，量产前必须改为 REF 或声明 TTV",
+                )
+
+    def check_g22_tail_frames(self) -> None:
+        for i, shot in enumerate(self.shots, 1):
+            tail = first_key(shot, ("tail_frame_desc", "尾帧", "尾帧描述"))
+            if tail is None:
+                if self.strict_ref:
+                    self._warn("G22", f"镜头#{i}", "缺少尾帧描述，批量前建议补尾帧接力信息")
+                continue
+            if not str(tail).strip():
+                self._warn("G22", f"镜头#{i}", "尾帧描述为空")
+
     def run(self) -> list[Finding]:
         checkers = (
             self.check_g02_role_cards,
@@ -579,6 +623,8 @@ class ProjectValidator:
             self.check_g18_negative_prompt,
             self.check_g19_open_and_hook,
             self.check_g20_roles_per_shot,
+            self.check_g21_ref_states,
+            self.check_g22_tail_frames,
         )
         for checker in checkers:
             checker()
@@ -613,6 +659,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--storyboard-file", help="分镜 Markdown 路径（可选）")
     parser.add_argument("--aspect", default="16:9", help="目标画幅，默认 16:9")
     parser.add_argument("--max-roles", type=int, default=3, help="单镜最多角色，默认 3")
+    parser.add_argument(
+        "--strict-ref",
+        action="store_true",
+        help="强制要求角色/镜头 ref_state=REF（或 TTV）并提醒尾帧描述，适合新项目量产门",
+    )
     parser.add_argument("--json", action="store_true", help="输出机器可读 JSON")
     args = parser.parse_args(argv)
 
@@ -658,6 +709,7 @@ def main(argv: list[str] | None = None) -> int:
         md_tables=md_tables,
         expected_aspect=args.aspect,
         max_roles_per_shot=args.max_roles,
+        strict_ref=args.strict_ref,
     )
     findings = validator.run()
     fails = [item for item in findings if item.level == "FAIL"]

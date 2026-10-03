@@ -31,6 +31,9 @@ New-Item -ItemType Directory -Force -Path "$env:COMFYUI_SHARED_DIR\models"
 
 本项目使用以下模型（名称可替换为同系列官方模型，但不要混用不兼容版本）：
 
+> 这是当前默认档案 `wan2.2-local` 的模型清单；要换 Seedance/MiniMax/Wan 3.0
+> 时先看 `references/model-profiles.md`，别只改模型文件名。
+
 | 用途 | 建议目录 | 参考文件 | 说明 |
 | --- | --- | --- | --- |
 | 文本生成基图 | `models/diffusion_models` | `z_image_turbo_int8_convrot.safetensors` | 快速出图，INT8 适配低显存 |

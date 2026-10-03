@@ -36,6 +36,7 @@
 - 单镜头 3-8 秒；冲突用近景/特写，环境用全景。
 - 默认 16:9，提示词写明“16:9 cinematic”。
 - 每个镜头是一句话+可执行动作+光线+镜头运动，不堆砌大段小说原文。
+- 景别、运镜、光线、负面包查 `references/prompt-library.md`，不要每次临场自创。
 - 分镜必须落成机器可校验的分镜 JSON（`shots` 数组 + 顶层元数据），
   分镜表 Markdown 作为人工审阅稿保留。
 
@@ -64,9 +65,17 @@
 - 角色设定必须落成机器可校验的 JSON（`images` 数组或角色名映射），
   每个角色固化定妆照路径、提示词、seed 与音色来源。
 
+## 4.5 模型与参考图锁定
+
+- 项目写明 `model_profile.id`（见 `references/model-profiles.md`），默认是
+  `wan2.2-local`；批量中途不换模型。
+- 每张参考图/定妆照标 `ref_state`：`REF` 可量产，`PLAN/TODO` 未锁，
+  `TTV` 表示镜头直接文生视频不依赖参考图（见 `references/project-files.md`）。
+- 量产前执行 `validate_project.py --strict-ref`，强制要求 `REF`/`TTV` 与尾帧信息。
+
 ## 5. 镜头提示词结构
 
-每个画面提示词按此结构组装：
+每个画面提示词按 `references/prompt-library.md` 的词库组装：
 
 ```text
 <角色定妆块,接最终定妆照> + <场景/时间/天气> + <动作/表情> + <镜头语言> + <风格块> + , no text, no watermark
@@ -84,6 +93,8 @@
 
 - 先给分镜和角色设定，用户审。
 - 定妆照先出，用户确认后再跑镜头完整版。
+- preview（1-2 镜）先出，用户明确说“继续/量产”后才批量铺开。
+- 批量前生成批次单与配音对齐单（见 `references/batch-continuity.md`）。
 - 完整版包含画面、配音、字幕、音效；每集交付时附质检说明。
 - 批量生成前按 `references/validation.md` 跑 `scripts/validate_project.py`，
   FAIL 项全部修复后再进 ComfyUI 管线。

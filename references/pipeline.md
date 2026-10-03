@@ -1,6 +1,8 @@
 # ComfyUI 三段式生成管线
 
 本技能把成片拆成三个独立 API 请求，避免一张大图同时载入多个大模型导致显存不足。
+本章描述当前默认档案 `wan2.2-local`；要切换 Seedance/MiniMax/Wan 3.0 等可选档案时，
+先看 `references/model-profiles.md`，不要直接沿用本页文件名与节点号。
 
 ## 工作流模板
 
@@ -14,6 +16,13 @@
 | `短剧配音字幕拟音综合工作流.json` | 配音/字幕/拟音合成 | 见 `voice-qa.md` |
 
 这些 JSON 是 ComfyUI Desktop 工作流格式，包含子图；`scripts/comfy_pipeline.py` 会拉平子图并生成 `/prompt` API 负载。
+
+## 模型方言
+
+- 当前默认：ZImage → Flux2 编辑 → Wan2.2 图生视频，三段独立 `/prompt`。
+- 视频提示词按 `prompt-library.md` 组装，负面包不能省。
+- 切换模型 profile 时，工作流文件名、节点号、分辨率、`model_profile.id` 要一起换，
+  并用 `plan_batch.py --dry-run` 先出一版批次计划确认。
 
 ## 运行方式
 
