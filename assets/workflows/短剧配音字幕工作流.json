@@ -1,0 +1,861 @@
+{
+  "id": "短剧配音字幕工作流.json-wf",
+  "revision": 0,
+  "last_node_id": 10,
+  "last_link_id": 11,
+  "nodes": [
+    {
+      "id": 1,
+      "type": "LoadVideo",
+      "pos": [
+        -1200,
+        0
+      ],
+      "size": [
+        320,
+        74
+      ],
+      "flags": {},
+      "order": 1,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "file",
+          "name": "file",
+          "type": "COMBO",
+          "widget": {
+            "name": "file"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "VIDEO",
+          "name": "VIDEO",
+          "type": "VIDEO",
+          "links": [
+            1
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "LoadVideo"
+      },
+      "widgets_values": [
+        "verify_source_00003.mp4"
+      ]
+    },
+    {
+      "id": 2,
+      "type": "GetVideoComponents",
+      "pos": [
+        -870,
+        0
+      ],
+      "size": [
+        300,
+        86
+      ],
+      "flags": {},
+      "order": 2,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "video",
+          "name": "video",
+          "type": "VIDEO",
+          "link": 1
+        }
+      ],
+      "outputs": [
+        {
+          "label": "images",
+          "name": "images",
+          "type": "IMAGE",
+          "links": [
+            5
+          ]
+        },
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO"
+        },
+        {
+          "label": "fps",
+          "name": "fps",
+          "type": "FLOAT",
+          "links": [
+            11
+          ]
+        },
+        {
+          "label": "bit_depth",
+          "name": "bit_depth",
+          "type": "COMBO"
+        },
+        {
+          "label": "color_space",
+          "name": "color_space",
+          "type": "COMBO"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "GetVideoComponents"
+      },
+      "widgets_values": []
+    },
+    {
+      "id": 3,
+      "type": "FB_Qwen3TTSCustomVoice",
+      "pos": [
+        -520,
+        -220
+      ],
+      "size": [
+        430,
+        380
+      ],
+      "flags": {},
+      "order": 3,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "text",
+          "name": "text",
+          "type": "STRING",
+          "widget": {
+            "name": "text"
+          }
+        },
+        {
+          "label": "speaker",
+          "name": "speaker",
+          "type": "COMBO",
+          "widget": {
+            "name": "speaker"
+          }
+        },
+        {
+          "label": "model_choice",
+          "name": "model_choice",
+          "type": "COMBO",
+          "widget": {
+            "name": "model_choice"
+          }
+        },
+        {
+          "label": "device",
+          "name": "device",
+          "type": "COMBO",
+          "widget": {
+            "name": "device"
+          }
+        },
+        {
+          "label": "precision",
+          "name": "precision",
+          "type": "COMBO",
+          "widget": {
+            "name": "precision"
+          }
+        },
+        {
+          "label": "language",
+          "name": "language",
+          "type": "COMBO",
+          "widget": {
+            "name": "language"
+          }
+        },
+        {
+          "label": "seed",
+          "name": "seed",
+          "type": "INT",
+          "widget": {
+            "name": "seed"
+          }
+        },
+        {
+          "label": "instruct",
+          "name": "instruct",
+          "type": "STRING",
+          "widget": {
+            "name": "instruct"
+          }
+        },
+        {
+          "label": "max_new_tokens",
+          "name": "max_new_tokens",
+          "type": "INT",
+          "widget": {
+            "name": "max_new_tokens"
+          }
+        },
+        {
+          "label": "top_p",
+          "name": "top_p",
+          "type": "FLOAT",
+          "widget": {
+            "name": "top_p"
+          }
+        },
+        {
+          "label": "top_k",
+          "name": "top_k",
+          "type": "INT",
+          "widget": {
+            "name": "top_k"
+          }
+        },
+        {
+          "label": "temperature",
+          "name": "temperature",
+          "type": "FLOAT",
+          "widget": {
+            "name": "temperature"
+          }
+        },
+        {
+          "label": "repetition_penalty",
+          "name": "repetition_penalty",
+          "type": "FLOAT",
+          "widget": {
+            "name": "repetition_penalty"
+          }
+        },
+        {
+          "label": "attention",
+          "name": "attention",
+          "type": "COMBO",
+          "widget": {
+            "name": "attention"
+          }
+        },
+        {
+          "label": "unload_model_after_generate",
+          "name": "unload_model_after_generate",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "unload_model_after_generate"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "links": [
+            3
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "FB_Qwen3TTSCustomVoice"
+      },
+      "widgets_values": [
+        "门后面，到底是什么？",
+        "Ryan",
+        "1.7B",
+        "auto",
+        "bf16",
+        "Chinese",
+        20261002,
+        "短剧配音，情绪自然，吐字清晰，语气符合剧情。",
+        2048,
+        0.95,
+        50,
+        0.9,
+        1.05,
+        "auto",
+        true
+      ]
+    },
+    {
+      "id": 4,
+      "type": "Apply Whisper",
+      "pos": [
+        -520,
+        260
+      ],
+      "size": [
+        330,
+        140
+      ],
+      "flags": {},
+      "order": 4,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 3
+        },
+        {
+          "label": "model",
+          "name": "model",
+          "type": "COMBO",
+          "widget": {
+            "name": "model"
+          }
+        },
+        {
+          "label": "language",
+          "name": "language",
+          "type": "COMBO",
+          "widget": {
+            "name": "language"
+          }
+        },
+        {
+          "label": "prompt",
+          "name": "prompt",
+          "type": "STRING",
+          "widget": {
+            "name": "prompt"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "text",
+          "name": "text",
+          "type": "STRING"
+        },
+        {
+          "label": "segments_alignment",
+          "name": "segments_alignment",
+          "type": "whisper_alignment",
+          "links": [
+            7
+          ]
+        },
+        {
+          "label": "words_alignment",
+          "name": "words_alignment",
+          "type": "whisper_alignment"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Apply Whisper"
+      },
+      "widgets_values": [
+        "small",
+        "Chinese",
+        ""
+      ]
+    },
+    {
+      "id": 5,
+      "type": "Save SRT",
+      "pos": [
+        -170,
+        260
+      ],
+      "size": [
+        300,
+        96
+      ],
+      "flags": {},
+      "order": 5,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "alignment",
+          "name": "alignment",
+          "type": "whisper_alignment",
+          "link": 7
+        },
+        {
+          "label": "name",
+          "name": "name",
+          "type": "STRING",
+          "widget": {
+            "name": "name"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "srt_path",
+          "name": "srt_path",
+          "type": "STRING",
+          "links": [
+            9
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Save SRT"
+      },
+      "widgets_values": [
+        "短剧字幕"
+      ]
+    },
+    {
+      "id": 6,
+      "type": "Add Subtitles To Frames",
+      "pos": [
+        170,
+        -260
+      ],
+      "size": [
+        360,
+        300
+      ],
+      "flags": {},
+      "order": 6,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "images",
+          "name": "images",
+          "type": "IMAGE",
+          "link": 5
+        },
+        {
+          "label": "alignment",
+          "name": "alignment",
+          "type": "whisper_alignment",
+          "link": 8
+        },
+        {
+          "label": "font_color",
+          "name": "font_color",
+          "type": "STRING",
+          "widget": {
+            "name": "font_color"
+          }
+        },
+        {
+          "label": "font_border_color",
+          "name": "font_border_color",
+          "type": "STRING",
+          "widget": {
+            "name": "font_border_color"
+          }
+        },
+        {
+          "label": "font_border_width",
+          "name": "font_border_width",
+          "type": "INT",
+          "widget": {
+            "name": "font_border_width"
+          }
+        },
+        {
+          "label": "font_family",
+          "name": "font_family",
+          "type": "COMBO",
+          "widget": {
+            "name": "font_family"
+          }
+        },
+        {
+          "label": "font_size",
+          "name": "font_size",
+          "type": "INT",
+          "widget": {
+            "name": "font_size"
+          }
+        },
+        {
+          "label": "x_position",
+          "name": "x_position",
+          "type": "INT",
+          "widget": {
+            "name": "x_position"
+          }
+        },
+        {
+          "label": "y_position",
+          "name": "y_position",
+          "type": "INT",
+          "widget": {
+            "name": "y_position"
+          }
+        },
+        {
+          "label": "center_x",
+          "name": "center_x",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "center_x"
+          }
+        },
+        {
+          "label": "center_y",
+          "name": "center_y",
+          "type": "BOOLEAN",
+          "widget": {
+            "name": "center_y"
+          }
+        },
+        {
+          "label": "video_fps",
+          "name": "video_fps",
+          "type": "FLOAT",
+          "widget": {
+            "name": "video_fps"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "IMAGE",
+          "name": "IMAGE",
+          "type": "IMAGE",
+          "links": [
+            6
+          ]
+        },
+        {
+          "label": "MASK",
+          "name": "MASK",
+          "type": "MASK"
+        },
+        {
+          "label": "cropped_subtitles",
+          "name": "cropped_subtitles",
+          "type": "IMAGE"
+        },
+        {
+          "label": "subtitle_coord",
+          "name": "subtitle_coord",
+          "type": "subtitle_coord"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "Add Subtitles To Frames"
+      },
+      "widgets_values": [
+        "white",
+        "black",
+        4,
+        "YRDZST Semibold.ttf",
+        72,
+        100,
+        100,
+        true,
+        true,
+        30.0
+      ]
+    },
+    {
+      "id": 7,
+      "type": "CreateVideo",
+      "pos": [
+        570,
+        -260
+      ],
+      "size": [
+        300,
+        90
+      ],
+      "flags": {},
+      "order": 7,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "images",
+          "name": "images",
+          "type": "IMAGE",
+          "link": 6
+        },
+        {
+          "label": "fps",
+          "name": "fps",
+          "type": "FLOAT",
+          "widget": {
+            "name": "fps"
+          }
+        },
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 4
+        },
+        {
+          "label": "bit_depth",
+          "name": "bit_depth",
+          "type": "COMBO",
+          "widget": {
+            "name": "bit_depth"
+          }
+        },
+        {
+          "label": "color_space",
+          "name": "color_space",
+          "type": "COMBO",
+          "widget": {
+            "name": "color_space"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "VIDEO",
+          "name": "VIDEO",
+          "type": "VIDEO",
+          "links": [
+            2
+          ]
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "CreateVideo"
+      },
+      "widgets_values": [
+        30.0,
+        "auto",
+        "sRGB"
+      ]
+    },
+    {
+      "id": 8,
+      "type": "SaveVideo",
+      "pos": [
+        920,
+        -260
+      ],
+      "size": [
+        330,
+        108
+      ],
+      "flags": {},
+      "order": 8,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "video",
+          "name": "video",
+          "type": "VIDEO",
+          "link": 2
+        },
+        {
+          "label": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          }
+        },
+        {
+          "label": "format",
+          "name": "format",
+          "type": "COMBO",
+          "widget": {
+            "name": "format"
+          }
+        },
+        {
+          "label": "codec",
+          "name": "codec",
+          "type": "COMBO",
+          "widget": {
+            "name": "codec"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "label": "video",
+          "name": "video",
+          "type": "VIDEO"
+        }
+      ],
+      "properties": {
+        "Node name for S&R": "SaveVideo"
+      },
+      "widgets_values": [
+        "video/短剧配音字幕",
+        "mp4",
+        "h264"
+      ]
+    },
+    {
+      "id": 9,
+      "type": "SaveText",
+      "pos": [
+        170,
+        260
+      ],
+      "size": [
+        310,
+        100
+      ],
+      "flags": {},
+      "order": 9,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "text",
+          "name": "text",
+          "type": "STRING",
+          "link": 9
+        },
+        {
+          "label": "filename_prefix",
+          "name": "filename_prefix",
+          "type": "STRING",
+          "widget": {
+            "name": "filename_prefix"
+          }
+        },
+        {
+          "label": "format",
+          "name": "format",
+          "type": "COMBO",
+          "widget": {
+            "name": "format"
+          }
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "SaveText"
+      },
+      "widgets_values": [
+        "短剧字幕文本",
+        "txt"
+      ]
+    },
+    {
+      "id": 10,
+      "type": "PreviewAudio",
+      "pos": [
+        0,
+        500
+      ],
+      "size": [
+        320,
+        70
+      ],
+      "flags": {},
+      "order": 10,
+      "mode": 0,
+      "inputs": [
+        {
+          "label": "audio",
+          "name": "audio",
+          "type": "AUDIO",
+          "link": 3
+        }
+      ],
+      "outputs": [],
+      "properties": {
+        "Node name for S&R": "PreviewAudio"
+      },
+      "widgets_values": []
+    }
+  ],
+  "links": [
+    [
+      1,
+      1,
+      0,
+      2,
+      0,
+      "VIDEO"
+    ],
+    [
+      2,
+      8,
+      0,
+      7,
+      0,
+      "VIDEO"
+    ],
+    [
+      3,
+      3,
+      0,
+      4,
+      0,
+      "AUDIO"
+    ],
+    [
+      4,
+      3,
+      0,
+      7,
+      2,
+      "AUDIO"
+    ],
+    [
+      5,
+      2,
+      0,
+      6,
+      0,
+      "IMAGE"
+    ],
+    [
+      6,
+      6,
+      0,
+      7,
+      0,
+      "IMAGE"
+    ],
+    [
+      7,
+      4,
+      1,
+      5,
+      0,
+      "whisper_alignment"
+    ],
+    [
+      8,
+      4,
+      1,
+      6,
+      1,
+      "whisper_alignment"
+    ],
+    [
+      9,
+      5,
+      0,
+      9,
+      0,
+      "STRING"
+    ],
+    [
+      10,
+      3,
+      0,
+      10,
+      0,
+      "AUDIO"
+    ],
+    [
+      11,
+      2,
+      2,
+      7,
+      1,
+      "FLOAT"
+    ]
+  ],
+  "groups": [],
+  "config": {},
+  "extra": {
+    "workflowRendererVersion": "LG",
+    "ds": {
+      "scale": 1.0,
+      "offset": [
+        0,
+        0
+      ]
+    },
+    "frontendVersion": "1.36.13",
+    "ue_links": [],
+    "links_added_by_ue": []
+  },
+  "version": 0.4
+}
